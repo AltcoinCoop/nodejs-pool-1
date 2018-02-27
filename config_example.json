@@ -1,7 +1,7 @@
 {
   "pool_id": 0,
   "bind_ip": "0.0.0.0",
-  "hostname": "testpool.com",
+  "hostname": "etn-pool.org",
   "db_storage_path": "CHANGEME",
   "coin": "etn",
   "mysql": {
