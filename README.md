@@ -14,11 +14,11 @@ API listens on port 8001, remoteShare listens on 8000
 
 Xmrpool.net (The refrence implementation) uses the following setup:  
 * https://etn-pool.org is hosted on it's own server, as the main website is a static frontend
-* https://api.etn-pool.net hosts api, remoteShare, longRunner, payments, blockManager, worker, as these must all be hosted with access to the same LMDB database.
+* https://api.etn-pool.org hosts api, remoteShare, longRunner, payments, blockManager, worker, as these must all be hosted with access to the same LMDB database.
 
 Sample Caddyfile for API:
 ```text
-https://api.etn-pool.org.net {
+https://api.etn-pool.org {
     proxy /bot 127.0.0.1:3000
     proxy /leafApi 127.0.0.1:8000
     proxy / 127.0.0.1:8001
