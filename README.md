@@ -13,12 +13,13 @@ worker - Does regular processing of statistics and sends status e-mails for non-
 API listens on port 8001, remoteShare listens on 8000
 
 Xmrpool.net (The refrence implementation) uses the following setup:  
-* https://xmrpool.net is hosted on it's own server, as the main website is a static frontend
-* https://api.xmrpool.net hosts api, remoteShare, longRunner, payments, blockManager, worker, as these must all be hosted with access to the same LMDB database.
+* https://etn-pool.org is hosted on it's own server, as the main website is a static frontend
+* https://api.etn-pool.net hosts api, remoteShare, longRunner, payments, blockManager, worker, as these must all be hosted with access to the same LMDB database.
 
 Sample Caddyfile for API:
 ```text
-https://api.xmrpool.net {
+https://api.etn-pool.org.net {
+    proxy /bot 127.0.0.1:3000
     proxy /leafApi 127.0.0.1:8000
     proxy / 127.0.0.1:8001
     cors
@@ -89,9 +90,6 @@ The following raw binaries **MUST BE AVAILABLE FOR IT TO BOOTSTRAP**:
 
 I've confirmed that the default server 16.04 installation has these requirements.
 
-The pool comes pre-configured with values for Monero (XMR), these may need to be changed depending on the exact requirements of your coin.  Other coins will likely be added down the road, and most likely will have configuration.sqls provided to overwrite the base configurations for their needs, but can be configured within the frontend as well.
-
-The pool ALSO applies a series of patches:  Fluffy Blocks, Additional Open P2P Connections, 128 Txn Bug Fix.  If you don't like these, replace the auto-installed monerod fixes!
 
 Wallet Setup
 ------------
@@ -123,7 +121,7 @@ general/emailFrom
 SQL import command: sudo mysql pool < ~/nodejs-pool/sample_config.sql (Adjust name/path as needed!)
 ```
 
-The shareHost configuration is designed to be pointed at wherever the leafApi endpoint exists.  For xmrpool.net, we use https://api.xmrpool.net/leafApi.  If you're using the automated setup script, you can use: `http://<your IP>/leafApi`, as Caddy will proxy it.  If you're just using localhost and a local pool serv, http://127.0.0.1:8000/leafApi will do you quite nicely
+The shareHost configuration is designed to be pointed at wherever the leafApi endpoint exists.  For xmrpool.net, we use https://api.etn-pool.org/leafApi.  If you're using the automated setup script, you can use: `http://<your IP>/leafApi`, as Caddy will proxy it.  If you're just using localhost and a local pool serv, http://127.0.0.1:8000/leafApi will do you quite nicely
 
 Additional ports can be added as desired, samples can be found at the end of base.sql.  If you're not comfortable with the MySQL command line, I highly suggest MySQL Workbench or a similar piece of software (I use datagrip!).  Your root MySQL password can be found in `/root/.my.cnf`
 
@@ -222,41 +220,6 @@ pm2 start blockManager worker payments remoteShare longRunner api
 This will restart all of your related daemons, and will clear any open reader connections, allowing LMDB to get back to a normal state.
 
 If on the other hand, you have no "Free pages" and your Pages used is equal to the Max Pages, then you've run out of disk space for LMDB.  You need to verify the cleaner is working.  For reference, 4.3 million shares are stored within approximately 2-3 Gb of space, so if you're vastly exceeding this, then your cleaner (longRunner) is likely broken.
-
-
-PPS Fee Thoughts
-================
-If you're considering PPS, I've spoken with [Fireice_UK](https://github.com/fireice-uk/) whom kindly did some math about what you're looking at in terms of requiements to run a PPS pool without it self-impoloding under particular risk factors, based on the work found [here](https://arxiv.org/pdf/1112.4980.pdf)
-
-```text
-Also I calculated the amount of XMR needed to for a PPS pool to stay afloat. Perhaps you should put them up in the README to stop some spectacular clusterfucks :D:
-For 1 in 1000000 chance that the pool will go bankrupt: 5% fee -> 1200 2% fee -> 3000
-For 1 in 1000000000 chance: 5% fee -> 1800 2% fee -> 4500
-```
-
-The developers of the pool have not verified this, but based on our own usage on https://xmrpool.net/ this seems rather reasonable.  You should be wary if you're consdering PPS and take you fees into account appropriately!
-
-Installation/Configuration Assistance
-=====================================
-If you need help installing the pool from scratch, please have your servers ready, which would be Ubuntu 16.04 servers, blank and clean, DNS records pointed.  These need to be x86_64 boxes with AES-NI Available.
-
-SSH access with a sudo-enabled user will be needed, preferably the user that is slated to run the pool.
-
-Assistance is not available for frontend customization at this time.
-
-For assitance, please contact ArqTras at support@supportaeon.com
-
-Developer Donations
-===================
-If you'd like to make a one time donation, the addresses are as follows:
-* AEON WmtWzE4zej7FLjctgMPk7Va7hiiESJF5xHfmb5KZaMAhHDSRU51pqTJQiVFZgRMmrga9KvqPg48EZTEVQ9qA47o52MYgiMqaw
-* XMR 4AYuDc4cEqxfxVTUFwVqPd4JdmKLjm9dNhTjuT6Ud5gQa564wp6cxMBWbwaVe4vUMveKAzAiA4j8xgUi29TpKXpm3zc3jmn
-* ETN etnkLgWfr5uE8MZSZpsabb6HjG8Mig9qaS4wQ6Hu2VVKTiJT9Ucdrzz9CqGF9tycaWbntrSRr1CwVJDqGYPtumL72GhXwtoPvs
-
-My pools:
-================
-* https://supportaeon.com
-* https://supportetn.eu
 
 Credits
 =======
