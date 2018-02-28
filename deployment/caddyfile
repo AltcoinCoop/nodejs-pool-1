@@ -1,6 +1,4 @@
-
 https://api.etn-pool.org/ {
-    proxy /bot 127.0.0.1:3000
     proxy /leafApi 127.0.0.1:8000
     proxy /api 127.0.0.1:8001 {
         without /api
@@ -9,6 +7,16 @@ https://api.etn-pool.org/ {
         header_upstream Connection {>Connection}
         header_upstream Upgrade {>Upgrade}
     }
+    header / {
+        Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, x-access-token"
+    }
+    gzip
+    mime .manifest text/cache-manifest
+}
+
+https://bot.etn-pool.org/ {
+    proxy /bot 127.0.0.1:3000
     header / {
         Access-Control-Allow-Methods "GET, POST, OPTIONS"
         Access-Control-Allow-Headers "Content-Type, x-access-token"
